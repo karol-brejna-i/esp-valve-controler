@@ -32,6 +32,15 @@ HourGlassTask *hourglassTask = new HourGlassTask(&runner);
 ValveController *mainValve = new ValveController(&runner, "main", MAIN_VALVE_OPEN, MAIN_VALVE_CLOSE, DEFAULT_AUTOSWTICH_INTERVAL, DEFAULT_AUTOSWTICH_INTERVAL);
 ValveController *drainValve = new ValveController(&runner, "drain", DRAIN_VALVE_OPEN, DRAIN_VALVE_CLOSE, DEFAULT_AUTOSWTICH_INTERVAL, DEFAULT_AUTOSWTICH_INTERVAL);
 
+
+void setMode(int pinNo, uint8_t mode) {
+    if (mode != 255)
+    {
+        debugI("changing pin %d state...", pinNo);
+        pinMode(pinNo, mode);
+    }
+}
+
 void processCmdRemoteDebug()
 {
 
@@ -43,27 +52,35 @@ void processCmdRemoteDebug()
     if (lastCmd.startsWith("input"))
     {
         pin = lastCmd.substring(5);
+        int pinNo = pin.toInt();
         mode = INPUT;
+        setMode(pinNo, mode);
     }
     else if (lastCmd.startsWith("output"))
     {
         pin = lastCmd.substring(6);
-        mode = 1;
+        int pinNo = pin.toInt();
+        mode = OUTPUT;
+        setMode(pinNo, mode);
     }
-    else
+    else if (lastCmd.startsWith("set"))
     {
+        pin = lastCmd.substring(3);
+        int pinNo = pin.toInt();
+        digitalWrite(pinNo, HIGH);    }
+    else if (lastCmd.startsWith("unset"))
+    {
+        pin = lastCmd.substring(5);
+        int pinNo = pin.toInt();
+        digitalWrite(pinNo, LOW);
+    }
+    else {
         debugW("kupa");
     }
 
     debugI("pin %s, mode %u", pin.c_str(), mode);
 
-    if (mode != 255)
-    {
 
-        int pinNo = pin.toInt();
-        debugI("changing pin %d state...", pinNo);
-        pinMode(pinNo, mode);
-    }
     displayPinModes();
 }
 
