@@ -101,9 +101,10 @@ void setup()
     String hostname = WiFi.hostname();
     Debug.setResetCmdEnabled(true);
     // Debug.showProfiler(true);
+    Debug.setSerialEnabled(false);
     Debug.showColors(true);
     Debug.showTime(true);
-    Debug.setSerialEnabled(true);
+
     Debug.begin(hostname, Debug.INFO);
 
     String helpCmd = "inputX -- where X is GPIO number (i.e.1, 2, 6, 9, 20) -- set given GPIO to INPUT mode\n";

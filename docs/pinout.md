@@ -52,3 +52,5 @@ set2 (d4) disables the led, unset2 enables the led (builtin) -- acutally it conf
             on the other hand, it steers the builtin led, why doesn't it control d4 pin? -- something with function1/2
 
 set3 works
+
+GPIO01, GPIO03 work as output, but then I am not able to do any remote debugging. No serial communication works. Moreover, RemoteDebug doesn't work either. (although it is supposed to be network-based...)

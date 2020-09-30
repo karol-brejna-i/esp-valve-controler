@@ -4,7 +4,7 @@
 static const char *VALVE_STATE_STRING[] = {
     FOREACH_VALVE_STATE(GENERATE_STRING)};
 
-ValveController::ValveController(Scheduler* aS, String name, int gpioClose, int gpioOpen, unsigned long openingTime, unsigned long closingTime)
+ValveController::ValveController(Scheduler* aS, String name, int gpioOpen, int gpioClose, unsigned long openingTime, unsigned long closingTime)
                         : Task(TASK_MINUTE * 60, TASK_FOREVER, aS, false)
 {
     debugI("I am in ValveController constructor.");

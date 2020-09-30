@@ -20,7 +20,7 @@
 // XXX in progress, wiring the valves
 #define MAIN_VALVE_OPEN     D1
 #define MAIN_VALVE_CLOSE    D2
-#define DRAIN_VALVE_OPEN    1 //GPIO03
+#define DRAIN_VALVE_OPEN    1 //GPIO01
 #define DRAIN_VALVE_CLOSE   3 //GPIO03
 
 void setupGPIOs();
