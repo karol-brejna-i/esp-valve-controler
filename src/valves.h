@@ -29,7 +29,7 @@ public:
     ~ValveController() {};
 
     bool startOpening();
-    bool tryClose();
+    bool startClosing();
     String toString();
     String getName();
     String autoSwitchTaskToString();
@@ -39,8 +39,6 @@ public:
     bool OnEnable();
     void OnDisable();
 
-    // XXX TODO temporarly make this public
-    void startAutoSwitch(unsigned long interval);
 private:
     String name;
     int gpioClose;
@@ -58,7 +56,7 @@ private:
     static void switchOn(int pin);
     static void switchOff(int pin);
 
-    // void startAutoSwitch(unsigned long interval);
+    void startAutoSwitch(unsigned long interval);
 };
 
 extern ValveController* mainValve;

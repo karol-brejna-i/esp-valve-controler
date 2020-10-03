@@ -102,12 +102,12 @@ bool ValveController::Callback() {
         state = VS_CLOSED;
         break;
     case VS_CLOSED:
-        state = VS_CLOSED;
+        state = VS_CLOSED; // TODO I think I miss marking previous state (probably using finishClosing method would solve the problem)
         debugW("Autoswitch triggered on VS_CLOSED rely. It should only happen for VS_CLOSING state.");
         break;
     case VS_OPENING:
         debugI("Autoswitch triggered on VS_OPENING. Cool.");
-        state = VS_OPEN;
+        state = VS_OPEN; // TODO I think I miss marking previous state (probably using finishOpening method would solve the problem)
         break;
     case VS_OPEN:
         state = VS_OPEN;
@@ -158,10 +158,10 @@ bool ValveController::startOpening()
     return true;
 }
 
-bool ValveController::tryClose()
+bool ValveController::startClosing()
 {
-    debugV("tryClose");
-    markPreviousState("TRY CLOSE");
+    debugV("startClosing");
+    markPreviousState("START CLOSING");
 
     debugV("set state to CLOSING");
     state = VS_CLOSING;
@@ -179,11 +179,15 @@ bool ValveController::tryClose()
     return true;
 }
 
+
+// TODO this was probably my idea to put the logic for finishiing closing (set GPIOs state, set object properties). I probably ended up with "hardcoding" it in Callback()
 void ValveController::finishClosing()
 {
     // turn off GPIO_CLOSE
 }
 
+
+// TODO check out this zombie method
 void ValveController::transitionToOpen()
 {
     debugD("---}}} Transition to ON");
@@ -192,6 +196,7 @@ void ValveController::transitionToOpen()
     // disable gpio
 }
 
+// TODO check out this zombie method
 void ValveController::transitionToClose()
 {
     debugD("---}}} Transition to OFF");

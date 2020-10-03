@@ -14,7 +14,7 @@ void setupDebugger(String hostname)
     String helpCmd = "inputX -- where X is GPIO number (i.e.1, 2, 6, 9, 20) -- set given GPIO to INPUT mode\n";
     helpCmd.concat("outputX -- where X is GPIO number (i.e.1, 2, 6, 9, 20) -- set given GPIO to OUTPUT mode\n");
     helpCmd.concat("setX -- set GPIO's X state to high\n");
-    helpCmd.concat("unsetX -- unset GPIO's X state to high\n");
+    helpCmd.concat("unsetX -- unset GPIO's X state to low\n");
 
     Debug.setHelpProjectsCmds(helpCmd);
     Debug.setCallBackProjectCmds(&processCmdRemoteDebug);
