@@ -30,7 +30,7 @@ public:
     ValveController(Scheduler* aS, String name, int gpioOpen, int gpioClose, unsigned long openingTime, unsigned long closingTime);
     ~ValveController() {};
 
-    bool tryOpen();
+    bool startOpening();
     bool tryClose();
     String toString();
     String getName();

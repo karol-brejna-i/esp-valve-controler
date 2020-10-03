@@ -26,33 +26,31 @@ ValveController* whichValve(int valve) {
     return result;
 }
 
-
-ValveController* tryOpen(int valveNo) {
-    debugD("tryOpne valveNo %d", valveNo);
+ValveController* startOpening(int valveNo) {
+    debugD("startOpening valveNo %d", valveNo);
     ValveController* valve = whichValve(valveNo);
-    debugD("tryOpen %s", valve->getName().c_str());
-    valve->tryOpen();
+    valve->startOpening();
     return valve;
 }
 
 ValveController* tryClose(int valveNo) {
     debugD("tryClose valveNo %d", valveNo);
     ValveController* valve = whichValve(valveNo);
-    debugD("tryClose %s", valve->getName().c_str());
     valve->tryClose();
     return valve;
 }
+
 void handleMainValveOn(AsyncWebServerRequest *request)
 {
     debugI("handleMainValve open");
-    ValveController* valve = tryOpen(1);
+    ValveController* valve = startOpening(1);
     request->send(200, "text/plain", valve->toString());
 }
 
 void handleDrainValveOn(AsyncWebServerRequest *request)
 {
     debugI("handleDrainValveOn open");
-    ValveController* valve = tryOpen(2);
+    ValveController* valve = startOpening(2);
     request->send(200, "text/plain", valve->toString());
 }
 

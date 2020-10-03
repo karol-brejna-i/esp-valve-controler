@@ -130,11 +130,11 @@ void ValveController::startAutoSwitch(unsigned long interval)
 }
 
 // XXX TODO tryopen rename to startOpening?
-bool ValveController::tryOpen()
+bool ValveController::startOpening()
 {
-    debugD("tryOpen");
+    debugD("startOpening");
     markPreviousState("TRY OPEN");
-    debugV("set state to OPNENING");
+    debugV("set state to OPENING");
     state = VS_OPENING;
 
     debugV("make sure the valve newer tries to open and close at the same time");
