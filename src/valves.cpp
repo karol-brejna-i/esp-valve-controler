@@ -32,7 +32,7 @@ void ValveController::setState(VALVE_STATE_ENUM newState)
 
 void ValveController::markPreviousState(String reason, unsigned long timestamp = millis())
 {
-    this->previouisState = state;
+    this->previousState = state;
     this->lastActionTimestamp = timestamp;
     this->lastAction = reason;
 }
@@ -43,9 +43,17 @@ String ValveController::getName() {
 
 String ValveController::toString()
 {
-    char buffer[168];
-    snprintf(buffer, 164, "{\"name\": \"%s\", \"state\": \"%s\", \"lastAction\": \"%s\", \"lastActionTimestamp\": \"%ld\"}",
-        this->name.c_str(), VALVE_STATE_STRING[this->state], this->lastAction.c_str(), this->lastActionTimestamp);
+    char buffer[256];
+    const char *jsonTemplate =
+        "{\"name\": \"%s\", \"state\": \"%s\", "
+        "\"lastAction\": \"%s\", \"lastActionTimestamp\": \"%lu\", "
+        "\"lastState\":\"%s\"}";
+
+    snprintf(buffer, 252, jsonTemplate,
+        this->name.c_str(), VALVE_STATE_STRING[this->state],
+        this->lastAction.c_str(), this->lastActionTimestamp,
+        VALVE_STATE_STRING[this->previousState]);
+
     return String(buffer);
 }
 
@@ -129,11 +137,10 @@ void ValveController::startAutoSwitch(unsigned long interval)
             "startautoswitch task after:", this->getId(), this->getInterval(), this->isEnabled(), this->getRunCounter(), this->getIterations(), millis());
 }
 
-// XXX TODO tryopen rename to startOpening?
 bool ValveController::startOpening()
 {
     debugD("startOpening");
-    markPreviousState("TRY OPEN");
+    markPreviousState("START OPENING");
     debugV("set state to OPENING");
     state = VS_OPENING;
 

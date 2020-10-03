@@ -21,12 +21,10 @@ class ValveController : public Task
 {
 public:
     VALVE_STATE_ENUM state;
-
-    VALVE_STATE_ENUM previouisState;
+    VALVE_STATE_ENUM previousState;
     String lastAction;
     unsigned long lastActionTimestamp;
 
-    // ValveController(Scheduler* aS, int gpioOpen, int gpioClose, unsigned long openingTime = DEFAULT_AUTOSWTICH_INTERVAL, unsigned long closingTime = DEFAULT_AUTOSWTICH_INTERVAL-100);
     ValveController(Scheduler* aS, String name, int gpioOpen, int gpioClose, unsigned long openingTime, unsigned long closingTime);
     ~ValveController() {};
 
