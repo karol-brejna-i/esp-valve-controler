@@ -6,9 +6,7 @@ void setupGPIOs()
 {
     // declare GIOs function
     pinMode(SIGNAL_LED, OUTPUT);
-    pinMode(STER, OUTPUT);
     digitalWrite(SIGNAL_LED, HIGH);
-    digitalWrite(STER, HIGH);
 
     pinMode(MAIN_VALVE_OPEN, OUTPUT);
     pinMode(MAIN_VALVE_CLOSE, OUTPUT);
@@ -21,16 +19,6 @@ void setupGPIOs()
     digitalWrite(DRAIN_VALVE_CLOSE, LOW);
 }
 
-void powerOn()
-{
-    digitalWrite(STER, LOW);
-}
-
-void powerOff()
-{
-    digitalWrite(STER, HIGH);
-}
-
 void ledOn()
 {
     debugD("LEDON");
@@ -41,13 +29,6 @@ void ledOff()
 {
     debugD("LEDOFF");
     digitalWrite(SIGNAL_LED, HIGH);
-}
-
-void press(int pressDelay)
-{
-    powerOn();
-    delay(pressDelay);
-    powerOff();
 }
 
 void blink(int blinkDelay)

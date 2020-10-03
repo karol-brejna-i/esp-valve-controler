@@ -46,8 +46,6 @@ private:
     unsigned long openingTime;
     unsigned long closingTime;
 
-    void transitionToOpen();
-    void transitionToClose();
     void markPreviousState(String reason, unsigned long timestamp);
 
     void finishClosing();

@@ -46,7 +46,7 @@ String ValveController::toString()
     char buffer[256];
     const char *jsonTemplate =
         "{\"name\": \"%s\", \"state\": \"%s\", "
-        "\"lastAction\": \"%s\", \"lastActionTimestamp\": \"%lu\", "
+        "\"lastAction\": \"%s\", \"lastActionTimestamp\": \"%lu\", " // TODO timestamp shouldn't be surrounded with "" (treated as string), it's a number
         "\"lastState\":\"%s\"}";
 
     snprintf(buffer, 252, jsonTemplate,
@@ -180,32 +180,11 @@ bool ValveController::startClosing()
 }
 
 
-// TODO this was probably my idea to put the logic for finishiing closing (set GPIOs state, set object properties). I probably ended up with "hardcoding" it in Callback()
+// TODO this was probably my idea to put the logic for finishing closing (set GPIOs state, set object properties). I probably ended up with "hardcoding" it in Callback()
 void ValveController::finishClosing()
 {
     // turn off GPIO_CLOSE
 }
-
-
-// TODO check out this zombie method
-void ValveController::transitionToOpen()
-{
-    debugD("---}}} Transition to ON");
-    // disable autoSwitchTask
-    // set proper state (opened)
-    // disable gpio
-}
-
-// TODO check out this zombie method
-void ValveController::transitionToClose()
-{
-    debugD("---}}} Transition to OFF");
-
-    // disable autoSwitchTask
-    // set proper state (opened)
-    // disable gpio
-}
-
 
 bool ValveController::OnEnable() {
   debugD("onenable ValveController %s", this->name.c_str());
