@@ -1,8 +1,7 @@
 #include "valves.h"
 #include "utils/debug_utils.h"
 
-static const char *VALVE_STATE_STRING[] = {
-    FOREACH_VALVE_STATE(GENERATE_STRING)};
+
 
 ValveController::ValveController(Scheduler* aS, String name, int gpioOpen, int gpioClose, unsigned long openingTime, unsigned long closingTime)
                         : Task(TASK_MINUTE * 60, TASK_FOREVER, aS, false)
@@ -47,7 +46,7 @@ String ValveController::toString()
     const char *jsonTemplate =
         "{\"name\": \"%s\", \"state\": \"%s\", "
         "\"lastAction\": \"%s\", \"lastActionTimestamp\": \"%lu\", " // TODO timestamp shouldn't be surrounded with "" (treated as string), it's a number
-        "\"lastState\":\"%s\"}";
+        "\"previousState\":\"%s\"}";
 
     snprintf(buffer, 252, jsonTemplate,
         this->name.c_str(), VALVE_STATE_STRING[this->state],

@@ -5,7 +5,7 @@ void setupDebugger(String hostname)
 {
     Debug.setResetCmdEnabled(true);
     // Debug.showProfiler(true);
-    Debug.setSerialEnabled(true);
+    // Debug.setSerialEnabled(true); // XXX TODO I suspect, that if the serial is on and no device is connected, remotedebug hangs
     Debug.showColors(true);
     Debug.showTime(true);
 
@@ -15,6 +15,7 @@ void setupDebugger(String hostname)
     helpCmd.concat("outputX -- where X is GPIO number (i.e.1, 2, 6, 9, 20) -- set given GPIO to OUTPUT mode\n");
     helpCmd.concat("setX -- set GPIO's X state to high\n");
     helpCmd.concat("unsetX -- unset GPIO's X state to low\n");
+    helpCmd.concat("status -- dump status\n");
 
     Debug.setHelpProjectsCmds(helpCmd);
     Debug.setCallBackProjectCmds(&processCmdRemoteDebug);
@@ -29,6 +30,8 @@ void setMode(int pinNo, uint8_t mode)
     }
 }
 
+#include "status_builder.h"
+#include "valves.h"
 void processCmdRemoteDebug()
 {
 
@@ -63,9 +66,20 @@ void processCmdRemoteDebug()
         int pinNo = pin.toInt();
         digitalWrite(pinNo, LOW);
     }
+    else if (lastCmd.equals("status"))
+    {
+        debugI("status");
+        const size_t capacity = JSON_ARRAY_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(4) + 3*JSON_OBJECT_SIZE(5) + 172;
+        DynamicJsonDocument doc(capacity);
+
+        String output = "";
+        generateStatusJson(&doc, mainValve, drainValve);
+        serializeJson(doc, output);
+        debugI("Status: %s", output.c_str());
+    }
     else
     {
-        debugW("kupa");
+        debugW("Unrecognized command.");
     }
 
     debugI("pin %s, mode %u", pin.c_str(), mode);

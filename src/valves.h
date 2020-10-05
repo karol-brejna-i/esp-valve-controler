@@ -3,6 +3,9 @@
 
 #define DEFAULT_AUTOSWTICH_INTERVAL 15 * TASK_SECOND
 
+#if !defined(VALVES_CONSTANTS_H)
+#define VALVES_CONSTANTS_H 1
+
 #define FOREACH_VALVE_STATE(VALVE_STATE) \
         VALVE_STATE(VS_UNKNOWN)  \
         VALVE_STATE(VS_OPEN)     \
@@ -16,6 +19,9 @@
 enum VALVE_STATE_ENUM {
     FOREACH_VALVE_STATE(GENERATE_ENUM)
 };
+
+static const char *VALVE_STATE_STRING[] = {
+    FOREACH_VALVE_STATE(GENERATE_STRING)};
 
 class ValveController : public Task
 {
@@ -31,9 +37,10 @@ public:
     bool startOpening();
     bool startClosing();
     String toString();
-    String getName();
     String autoSwitchTaskToString();
     void setState(VALVE_STATE_ENUM newState);
+
+    String getName();
 
     bool Callback();
     bool OnEnable();
@@ -56,6 +63,7 @@ private:
 
     void startAutoSwitch(unsigned long interval);
 };
+#endif
 
 extern ValveController* mainValve;
 extern ValveController* drainValve;

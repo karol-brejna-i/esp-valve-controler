@@ -13,7 +13,8 @@ void handleVersion(AsyncWebServerRequest *request)
 }
 
 BlinkTask* statusBlink = NULL;
-ValveController* testValveController = NULL;
+
+#include "utils/status_builder.h"
 
 void handleStatus(AsyncWebServerRequest *request)
 {
@@ -34,20 +35,24 @@ void handleStatus(AsyncWebServerRequest *request)
         statusBlink->enable();
     }
 
-    // XXX TODO make it prettier
-    String mainValveStatus = mainValve->toString();
-    String drainValveStatus = drainValve->toString();
 
-    String status = String("hostname: " + hostname + ", strength: " + strength + ", mainValve: " + mainValveStatus + ", drainValve: " + drainValveStatus);
+    const size_t capacity = JSON_ARRAY_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(4) + 3*JSON_OBJECT_SIZE(5)+ 172;
+    DynamicJsonDocument doc(capacity);
+
+    String output = "";
+    generateStatusJson(&doc, mainValve, drainValve);
+    serializeJson(doc, output);
+    debugI("Serialized to String %s", output.c_str());
 
     debugD("<---------------------------------------------------------------");
     debugD("%s\nTaskID: %u; interval: %lu; isEnabled: %d; runCounter: %lu; iterations: %ld; %lu;\n",
             "main valve:", mainValve->getId(), mainValve->getInterval(), mainValve->isEnabled(), mainValve->getRunCounter(), mainValve->getIterations(), millis());
     debugD("%s\nTaskID: %u; interval: %lu; isEnabled: %d; runCounter: %lu; iterations: %ld; %lu;\n",
             "drain valve:", drainValve->getId(), drainValve->getInterval(), drainValve->isEnabled(), drainValve->getRunCounter(), drainValve->getIterations(), millis());
-    debugD("status response: %s", status.c_str());
     debugD(">---------------------------------------------------------------");
 
     displayPinModes();
-    request->send(200, "text/html", status);
+
+    debugI("status response: %s", output.c_str());
+    request->send(200, "text/html", output);
 }
