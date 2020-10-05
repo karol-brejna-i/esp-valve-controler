@@ -19,8 +19,6 @@ BlinkTask* statusBlink = NULL;
 void handleStatus(AsyncWebServerRequest *request)
 {
     debugI("handleStatus");
-    String hostname = WiFi.hostname();
-    int strength = WiFi.RSSI();
 
     if (statusBlink == NULL) {
         debugV("creatubg blinkTask instance");
@@ -34,7 +32,6 @@ void handleStatus(AsyncWebServerRequest *request)
         statusBlink->setIterations(10);
         statusBlink->enable();
     }
-
 
     const size_t capacity = JSON_ARRAY_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(4) + 3*JSON_OBJECT_SIZE(5)+ 172;
     DynamicJsonDocument doc(capacity);

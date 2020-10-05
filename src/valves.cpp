@@ -45,7 +45,7 @@ String ValveController::toString()
     char buffer[256];
     const char *jsonTemplate =
         "{\"name\": \"%s\", \"state\": \"%s\", "
-        "\"lastAction\": \"%s\", \"lastActionTimestamp\": \"%lu\", " // TODO timestamp shouldn't be surrounded with "" (treated as string), it's a number
+        "\"lastAction\": \"%s\", \"lastActionTimestamp\": %lu, "
         "\"previousState\":\"%s\"}";
 
     snprintf(buffer, 252, jsonTemplate,

@@ -95,6 +95,7 @@ void handleMainValveGetState(AsyncWebServerRequest *request)
 {
     debugI("handleMainValveGetState");
     String valveState = "";
+    // TODO move to json based (ArduinoJson) result
     getValveState(valveState, 1); // XXX TODO add constant
     request->send(200, "application/json", valveState);
 }
@@ -103,6 +104,7 @@ void handleDrainValveGetState(AsyncWebServerRequest *request)
 {
     debugI("handleDrainValveGetState");
     String valveState = "";
+    // TODO move to json based (ArduinoJson) result
     getValveState(valveState, 2);
     request->send(200, "application/json", valveState);
 }
