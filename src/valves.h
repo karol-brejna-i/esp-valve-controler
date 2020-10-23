@@ -1,8 +1,6 @@
 #include <Arduino.h>
 #include <ts.hpp>
 
-#define DEFAULT_AUTOSWTICH_INTERVAL 20 * TASK_SECOND
-
 #if !defined(VALVES_CONSTANTS_H)
 #define VALVES_CONSTANTS_H 1
 
@@ -23,23 +21,45 @@ enum VALVE_STATE_ENUM {
 static const char *VALVE_STATE_STRING[] = {
     FOREACH_VALVE_STATE(GENERATE_STRING)};
 
+
+/**
+ * @brief Encapsulates logic for controling a single valve.
+ *
+ */
 class ValveController : public Task
 {
 public:
+     /// current sate of the valve.
     VALVE_STATE_ENUM state;
+    /// previos state of the valve
     VALVE_STATE_ENUM previousState;
+    /// last action performed on the object
     String lastAction;
+    /// the timestamp of last action
     unsigned long lastActionTimestamp;
 
-    ValveController(Scheduler* aS, String name, int gpioOpen, int gpioClose, unsigned long openingTime, unsigned long closingTime);
+    /**
+     * @brief Construct a new Valve Controller object
+     *
+     * @param aS scheduler
+     * @param name name of the controlled valve
+     * @param gpioOpen the number of GPIO used to open the valve
+     * @param gpioClose the number of GPIO used to close the valve
+     * @param openingTime for how long "open" signal should be sent to the rely in order for the valve to fully open
+     * @param closingTime for how long "close" signal should be sent to the rely in order for the valve to fully close
+     * @param valueForOn some setups may require HIGH signal to be sent in order to switch on the rely, others LOW. Use this parameter to configure the behaviour.
+     */
+    ValveController(Scheduler* aS, String name, int gpioOpen, int gpioClose, unsigned long openingTime, unsigned long closingTime, uint8_t valueForOn);
     ~ValveController() {};
 
     bool startOpening();
     bool startClosing();
+    /// get string representation of the object
     String toString();
-    String autoSwitchTaskToString();
+    // String autoSwitchTaskToString();
     void setState(VALVE_STATE_ENUM newState);
 
+    /// Get valve name.
     String getName();
 
     bool Callback();
@@ -52,14 +72,15 @@ private:
     int gpioOpen;
     unsigned long openingTime;
     unsigned long closingTime;
+    uint8_t valueForOn;
 
     void markPreviousState(String reason, unsigned long timestamp);
 
     void finishClosing();
     void finishOpening();
 
-    static void switchOn(int pin);
-    static void switchOff(int pin);
+    void switchOn(int pin);
+    void switchOff(int pin);
 
     void startAutoSwitch(unsigned long interval);
 };

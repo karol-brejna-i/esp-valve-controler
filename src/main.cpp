@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "constants.h"
 
 #include "build.h"
 #include "utils/debug_utils.h"
@@ -29,8 +30,8 @@ Scheduler runner;
 HourGlassTask *hourglassTask = new HourGlassTask(&runner);
 
 #include "valves.h"
-ValveController *mainValve = new ValveController(&runner, "main", MAIN_VALVE_OPEN, MAIN_VALVE_CLOSE, DEFAULT_AUTOSWTICH_INTERVAL, DEFAULT_AUTOSWTICH_INTERVAL);
-ValveController *drainValve = new ValveController(&runner, "drain", DRAIN_VALVE_OPEN, DRAIN_VALVE_CLOSE, DEFAULT_AUTOSWTICH_INTERVAL, DEFAULT_AUTOSWTICH_INTERVAL);
+ValveController *mainValve = new ValveController(&runner, "main", MAIN_VALVE_OPEN, MAIN_VALVE_CLOSE, DEFAULT_AUTOSWTICH_INTERVAL, DEFAULT_AUTOSWTICH_INTERVAL, VALUE_FOR_ON);
+ValveController *drainValve = new ValveController(&runner, "drain", DRAIN_VALVE_OPEN, DRAIN_VALVE_CLOSE, DEFAULT_AUTOSWTICH_INTERVAL, DEFAULT_AUTOSWTICH_INTERVAL, VALUE_FOR_ON);
 
 void setup()
 {

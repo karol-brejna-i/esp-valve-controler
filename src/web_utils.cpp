@@ -41,7 +41,6 @@ void setupHandlers()
                  size_t len, bool final) { handleDoUpdate(request, filename, index, data, len, final); });
 }
 
-
 void setupWebServer()
 {
     debugI("Setting up a web server");

@@ -1,9 +1,7 @@
 #include "valves.h"
 #include "utils/debug_utils.h"
 
-
-
-ValveController::ValveController(Scheduler* aS, String name, int gpioOpen, int gpioClose, unsigned long openingTime, unsigned long closingTime)
+ValveController::ValveController(Scheduler* aS, String name, int gpioOpen, int gpioClose, unsigned long openingTime, unsigned long closingTime, uint8_t valueForOn)
                         : Task(TASK_MINUTE * 60, TASK_FOREVER, aS, false)
 {
     debugI("I am in ValveController constructor.");
@@ -18,9 +16,10 @@ ValveController::ValveController(Scheduler* aS, String name, int gpioOpen, int g
 
     this->openingTime = openingTime;
     this->closingTime = closingTime;
+    this->valueForOn = valueForOn;
+
     // XXX TODO here goes the dilema: do we assume that vavlecontroller gets gpio pins already configured?
     // or do we configure them ourselves?
-    // XXX TODO also, for some applications ON may mean Low for other High...
 }
 
 
@@ -56,24 +55,24 @@ String ValveController::toString()
     return String(buffer);
 }
 
-String ValveController::autoSwitchTaskToString()
-{
-    char buffer[102];
-    snprintf(buffer, 100, "ValveController {state: %s, lastAction: %s, lastActionTimestamp: %ld}", VALVE_STATE_STRING[this->state], this->lastAction.c_str(), this->lastActionTimestamp);
-    return String(buffer);
+// String ValveController::autoSwitchTaskToString()
+// {
+//     char buffer[102];
+//     snprintf(buffer, 100, "ValveController {state: %s, lastAction: %s, lastActionTimestamp: %ld}", VALVE_STATE_STRING[this->state], this->lastAction.c_str(), this->lastActionTimestamp);
+//     return String(buffer);
 
-}
+// }
 
 void ValveController::switchOn(int pin)
 {
     debugD("switchOn %d", pin);
-    digitalWrite(pin, HIGH);
+    digitalWrite(pin, this->valueForOn);
 }
 
 void ValveController::switchOff(int pin)
 {
     debugD("switchOff %d", pin);
-    digitalWrite(pin, LOW);
+    digitalWrite(pin, !this->valueForOn);
 }
 
 /**
@@ -86,7 +85,6 @@ void ValveController::switchOff(int pin)
  */
 bool ValveController::Callback() {
     debugD("callback %s", this->name.c_str());
-
 
     debugD("callback %s; state: %s, lastAction: %s, lastActionTimestamp: %lu}", this->name.c_str(), VALVE_STATE_STRING[this->state], this->lastAction.c_str(), this->lastActionTimestamp);
     // switch off the relays

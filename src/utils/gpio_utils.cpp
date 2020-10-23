@@ -1,3 +1,4 @@
+#include "constants.h"
 #include "gpio_utils.h"
 
 #include "utils/debug_utils.h"
@@ -6,17 +7,20 @@ void setupGPIOs()
 {
     // declare GIOs function
     pinMode(SIGNAL_LED, OUTPUT);
-    digitalWrite(SIGNAL_LED, HIGH);
 
-    pinMode(MAIN_VALVE_OPEN, OUTPUT);
-    pinMode(MAIN_VALVE_CLOSE, OUTPUT);
-    pinMode(DRAIN_VALVE_OPEN, OUTPUT);
+    pinMode(MAIN_VALVE_OPEN,   OUTPUT);
+    pinMode(MAIN_VALVE_CLOSE,  OUTPUT);
+    pinMode(DRAIN_VALVE_OPEN,  OUTPUT);
     pinMode(DRAIN_VALVE_CLOSE, OUTPUT);
 
-    digitalWrite(MAIN_VALVE_OPEN, LOW);
-    digitalWrite(MAIN_VALVE_CLOSE, LOW);
-    digitalWrite(DRAIN_VALVE_OPEN, LOW);
-    digitalWrite(DRAIN_VALVE_CLOSE, LOW);
+
+    // set initial state
+    digitalWrite(SIGNAL_LED, HIGH);
+
+    digitalWrite(MAIN_VALVE_OPEN,   !VALUE_FOR_ON);
+    digitalWrite(MAIN_VALVE_CLOSE,  !VALUE_FOR_ON);
+    digitalWrite(DRAIN_VALVE_OPEN,  !VALUE_FOR_ON);
+    digitalWrite(DRAIN_VALVE_CLOSE, !VALUE_FOR_ON);
 }
 
 void ledOn()
@@ -29,15 +33,6 @@ void ledOff()
 {
     debugD("LEDOFF");
     digitalWrite(SIGNAL_LED, HIGH);
-}
-
-void blink(int blinkDelay)
-{
-    debugD("BLINK %d", blinkDelay);
-
-    ledOn();
-    delay(blinkDelay);
-    ledOff();
 }
 
 void displayPinModes()
