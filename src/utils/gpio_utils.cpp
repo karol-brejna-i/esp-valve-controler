@@ -56,7 +56,6 @@ void displayPinModes()
 #include <pins_arduino.h>
 #define UNKNOWN_PIN 0xFF
 
-
 int getPinMode2(uint8_t pin)
 {
     uint8_t bit = digitalPinToBitMask(pin);

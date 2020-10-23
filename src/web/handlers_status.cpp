@@ -48,7 +48,9 @@ void handleStatus(AsyncWebServerRequest *request)
             "drain valve:", drainValve->getId(), drainValve->getInterval(), drainValve->isEnabled(), drainValve->getRunCounter(), drainValve->getIterations(), millis());
     debugD(">---------------------------------------------------------------");
 
-    displayPinModes();
+    // XXX I leave it here for further investigation. Invoked from RemoteDebug (void processCmdRemoteDebug()), the following works.
+    // When run from handleStatus, it restarts the device on second request/invocation.
+    // displayPinModes();
 
     debugI("status response: %s", output.c_str());
     request->send(200, "text/html", output);
