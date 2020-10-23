@@ -46,18 +46,34 @@ void displayPinModes()
     int cnt = 0;
     for (unsigned int pin = 0; pin < 32; pin++)
     {
-        uint8_t pinomode2 = getPinMode((uint8_t)pin);
-        if (pinomode2 == 1)
+        uint8_t pinomode = getPinMode((uint8_t)pin);
+        if (pinomode == 1)
         {
-            debugI("Mode of pin %d is %u", pin, pinomode2);
+            debugI("Mode of pin %d is %u", pin, pinomode);
             cnt++;
         }
+        int pinmode2 = getPinMode2(pin);
+        debugI("Mode2 of pin %d is %d", pin, pinmode2);
     }
     debugI("Output pins cnt %d", cnt);
 }
 
 #include <pins_arduino.h>
 #define UNKNOWN_PIN 0xFF
+
+
+int getPinMode2(uint8_t pin)
+{
+    uint8_t bit = digitalPinToBitMask(pin);
+    uint8_t port = digitalPinToPort(pin);
+    volatile uint32_t  *reg = portModeRegister(port);
+
+    if (*reg & bit) {
+        return OUTPUT;
+    } else {
+        return INPUT;
+    }
+}
 
 uint8_t getPinMode(uint8_t pin)
 {

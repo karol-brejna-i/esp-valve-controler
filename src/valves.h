@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <ts.hpp>
 
-#define DEFAULT_AUTOSWTICH_INTERVAL 15 * TASK_SECOND
+#define DEFAULT_AUTOSWTICH_INTERVAL 20 * TASK_SECOND
 
 #if !defined(VALVES_CONSTANTS_H)
 #define VALVES_CONSTANTS_H 1

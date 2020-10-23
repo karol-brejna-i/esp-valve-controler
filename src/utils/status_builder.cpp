@@ -55,6 +55,8 @@ void constructSystemJson(JsonObject jo) {
 
 }
 
+
+// TODO consider adding gpioOn, gpioOff as fields
 void constructValveJson(JsonObject valveJson, ValveController *valve) {
     valveJson["name"] = valve->getName();
     valveJson["state"] = VALVE_STATE_STRING[valve->state];
