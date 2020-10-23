@@ -6,3 +6,5 @@
 **/*.priv
 **/*.priv.*
 versioning_build
+versioning_version
+include/build.h

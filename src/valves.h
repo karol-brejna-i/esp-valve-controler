@@ -1,7 +1,10 @@
 #include <Arduino.h>
 #include <ts.hpp>
 
-#define DEFAULT_AUTOSWTICH_INTERVAL 15 * TASK_SECOND
+#define DEFAULT_AUTOSWTICH_INTERVAL 20 * TASK_SECOND
+
+#if !defined(VALVES_CONSTANTS_H)
+#define VALVES_CONSTANTS_H 1
 
 #define FOREACH_VALVE_STATE(VALVE_STATE) \
         VALVE_STATE(VS_UNKNOWN)  \
@@ -17,32 +20,32 @@ enum VALVE_STATE_ENUM {
     FOREACH_VALVE_STATE(GENERATE_ENUM)
 };
 
+static const char *VALVE_STATE_STRING[] = {
+    FOREACH_VALVE_STATE(GENERATE_STRING)};
+
 class ValveController : public Task
 {
 public:
     VALVE_STATE_ENUM state;
-
-    VALVE_STATE_ENUM previouisState;
+    VALVE_STATE_ENUM previousState;
     String lastAction;
     unsigned long lastActionTimestamp;
 
-    // ValveController(Scheduler* aS, int gpioOpen, int gpioClose, unsigned long openingTime = DEFAULT_AUTOSWTICH_INTERVAL, unsigned long closingTime = DEFAULT_AUTOSWTICH_INTERVAL-100);
     ValveController(Scheduler* aS, String name, int gpioOpen, int gpioClose, unsigned long openingTime, unsigned long closingTime);
     ~ValveController() {};
 
-    bool tryOpen();
-    bool tryClose();
+    bool startOpening();
+    bool startClosing();
     String toString();
-    String getName();
     String autoSwitchTaskToString();
     void setState(VALVE_STATE_ENUM newState);
+
+    String getName();
 
     bool Callback();
     bool OnEnable();
     void OnDisable();
 
-    // XXX TODO temporarly make this public
-    void startAutoSwitch(unsigned long interval);
 private:
     String name;
     int gpioClose;
@@ -50,8 +53,6 @@ private:
     unsigned long openingTime;
     unsigned long closingTime;
 
-    void transitionToOpen();
-    void transitionToClose();
     void markPreviousState(String reason, unsigned long timestamp);
 
     void finishClosing();
@@ -60,8 +61,9 @@ private:
     static void switchOn(int pin);
     static void switchOff(int pin);
 
-    // void startAutoSwitch(unsigned long interval);
+    void startAutoSwitch(unsigned long interval);
 };
+#endif
 
 extern ValveController* mainValve;
 extern ValveController* drainValve;

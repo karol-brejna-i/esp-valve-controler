@@ -26,33 +26,31 @@ ValveController* whichValve(int valve) {
     return result;
 }
 
-
-ValveController* tryOpen(int valveNo) {
-    debugD("tryOpne valveNo %d", valveNo);
+ValveController* startOpening(int valveNo) {
+    debugD("startOpening valveNo %d", valveNo);
     ValveController* valve = whichValve(valveNo);
-    debugD("tryOpen %s", valve->getName().c_str());
-    valve->tryOpen();
+    valve->startOpening();
     return valve;
 }
 
-ValveController* tryClose(int valveNo) {
-    debugD("tryClose valveNo %d", valveNo);
+ValveController* startClosing(int valveNo) {
+    debugD("startClosing valveNo %d", valveNo);
     ValveController* valve = whichValve(valveNo);
-    debugD("tryClose %s", valve->getName().c_str());
-    valve->tryClose();
+    valve->startClosing();
     return valve;
 }
+
 void handleMainValveOn(AsyncWebServerRequest *request)
 {
     debugI("handleMainValve open");
-    ValveController* valve = tryOpen(1);
+    ValveController* valve = startOpening(1);
     request->send(200, "text/plain", valve->toString());
 }
 
 void handleDrainValveOn(AsyncWebServerRequest *request)
 {
     debugI("handleDrainValveOn open");
-    ValveController* valve = tryOpen(2);
+    ValveController* valve = startOpening(2);
     request->send(200, "text/plain", valve->toString());
 }
 
@@ -60,14 +58,14 @@ void handleDrainValveOn(AsyncWebServerRequest *request)
 void handleMainValveOff(AsyncWebServerRequest *request)
 {
     debugI("handleMainValve off");
-    ValveController* valve = tryClose(1);
+    ValveController* valve = startClosing(1);
     request->send(200, "text/plain", valve->toString());
 }
 
 void handleDrainValveOff(AsyncWebServerRequest *request)
 {
     debugI("handleDrainValveOff");
-    ValveController* valve = tryClose(2);
+    ValveController* valve = startClosing(2);
     request->send(200, "text/plain", valve->toString());
 }
 
@@ -97,6 +95,7 @@ void handleMainValveGetState(AsyncWebServerRequest *request)
 {
     debugI("handleMainValveGetState");
     String valveState = "";
+    // TODO move to json based (ArduinoJson) result
     getValveState(valveState, 1); // XXX TODO add constant
     request->send(200, "application/json", valveState);
 }
@@ -105,6 +104,7 @@ void handleDrainValveGetState(AsyncWebServerRequest *request)
 {
     debugI("handleDrainValveGetState");
     String valveState = "";
+    // TODO move to json based (ArduinoJson) result
     getValveState(valveState, 2);
     request->send(200, "application/json", valveState);
 }

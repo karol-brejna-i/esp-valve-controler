@@ -44,3 +44,17 @@ I was not able to set OUTPUT mode for the following pins:
 
 
 Now I'll try to check the actual pins with multimeter.
+
+
+set5 and 4 (d1, d2) works
+
+set2 (d4) disables the led, unset2 enables the led (builtin) -- acutally it confirms the information from "Wemos D1 Mini Pro pinout" section;
+            on the other hand, it steers the builtin led, why doesn't it control d4 pin? -- something with function1/2
+
+set3 works
+
+GPIO01, GPIO03 work as output, but then I am not able to do any remote debugging. No serial communication works. Moreover, RemoteDebug doesn't work either. (although it is supposed to be network-based...)
+
+
+XXX TODO:
+read: https://github.com/xreef/PCF8574_library/issues/14

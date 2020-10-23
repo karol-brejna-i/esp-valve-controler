@@ -1,10 +1,9 @@
 #include "valves.h"
 #include "utils/debug_utils.h"
 
-static const char *VALVE_STATE_STRING[] = {
-    FOREACH_VALVE_STATE(GENERATE_STRING)};
 
-ValveController::ValveController(Scheduler* aS, String name, int gpioClose, int gpioOpen, unsigned long openingTime, unsigned long closingTime)
+
+ValveController::ValveController(Scheduler* aS, String name, int gpioOpen, int gpioClose, unsigned long openingTime, unsigned long closingTime)
                         : Task(TASK_MINUTE * 60, TASK_FOREVER, aS, false)
 {
     debugI("I am in ValveController constructor.");
@@ -32,7 +31,7 @@ void ValveController::setState(VALVE_STATE_ENUM newState)
 
 void ValveController::markPreviousState(String reason, unsigned long timestamp = millis())
 {
-    this->previouisState = state;
+    this->previousState = state;
     this->lastActionTimestamp = timestamp;
     this->lastAction = reason;
 }
@@ -43,9 +42,17 @@ String ValveController::getName() {
 
 String ValveController::toString()
 {
-    char buffer[168];
-    snprintf(buffer, 164, "{\"name\": \"%s\", \"state\": \"%s\", \"lastAction\": \"%s\", \"lastActionTimestamp\": \"%ld\"}",
-        this->name.c_str(), VALVE_STATE_STRING[this->state], this->lastAction.c_str(), this->lastActionTimestamp);
+    char buffer[256];
+    const char *jsonTemplate =
+        "{\"name\": \"%s\", \"state\": \"%s\", "
+        "\"lastAction\": \"%s\", \"lastActionTimestamp\": %lu, "
+        "\"previousState\":\"%s\"}";
+
+    snprintf(buffer, 252, jsonTemplate,
+        this->name.c_str(), VALVE_STATE_STRING[this->state],
+        this->lastAction.c_str(), this->lastActionTimestamp,
+        VALVE_STATE_STRING[this->previousState]);
+
     return String(buffer);
 }
 
@@ -94,12 +101,12 @@ bool ValveController::Callback() {
         state = VS_CLOSED;
         break;
     case VS_CLOSED:
-        state = VS_CLOSED;
+        state = VS_CLOSED; // TODO I think I miss marking previous state (probably using finishClosing method would solve the problem)
         debugW("Autoswitch triggered on VS_CLOSED rely. It should only happen for VS_CLOSING state.");
         break;
     case VS_OPENING:
         debugI("Autoswitch triggered on VS_OPENING. Cool.");
-        state = VS_OPEN;
+        state = VS_OPEN; // TODO I think I miss marking previous state (probably using finishOpening method would solve the problem)
         break;
     case VS_OPEN:
         state = VS_OPEN;
@@ -129,12 +136,11 @@ void ValveController::startAutoSwitch(unsigned long interval)
             "startautoswitch task after:", this->getId(), this->getInterval(), this->isEnabled(), this->getRunCounter(), this->getIterations(), millis());
 }
 
-// XXX TODO tryopen rename to startOpening?
-bool ValveController::tryOpen()
+bool ValveController::startOpening()
 {
-    debugD("tryOpen");
-    markPreviousState("TRY OPEN");
-    debugV("set state to OPNENING");
+    debugD("startOpening");
+    markPreviousState("START OPENING");
+    debugV("set state to OPENING");
     state = VS_OPENING;
 
     debugV("make sure the valve newer tries to open and close at the same time");
@@ -151,10 +157,10 @@ bool ValveController::tryOpen()
     return true;
 }
 
-bool ValveController::tryClose()
+bool ValveController::startClosing()
 {
-    debugV("tryClose");
-    markPreviousState("TRY CLOSE");
+    debugV("startClosing");
+    markPreviousState("START CLOSING");
 
     debugV("set state to CLOSING");
     state = VS_CLOSING;
@@ -172,28 +178,12 @@ bool ValveController::tryClose()
     return true;
 }
 
+
+// TODO this was probably my idea to put the logic for finishing closing (set GPIOs state, set object properties). I probably ended up with "hardcoding" it in Callback()
 void ValveController::finishClosing()
 {
     // turn off GPIO_CLOSE
 }
-
-void ValveController::transitionToOpen()
-{
-    debugD("---}}} Transition to ON");
-    // disable autoSwitchTask
-    // set proper state (opened)
-    // disable gpio
-}
-
-void ValveController::transitionToClose()
-{
-    debugD("---}}} Transition to OFF");
-
-    // disable autoSwitchTask
-    // set proper state (opened)
-    // disable gpio
-}
-
 
 bool ValveController::OnEnable() {
   debugD("onenable ValveController %s", this->name.c_str());

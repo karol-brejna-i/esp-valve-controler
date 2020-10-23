@@ -6,9 +6,7 @@ void setupGPIOs()
 {
     // declare GIOs function
     pinMode(SIGNAL_LED, OUTPUT);
-    pinMode(STER, OUTPUT);
     digitalWrite(SIGNAL_LED, HIGH);
-    digitalWrite(STER, HIGH);
 
     pinMode(MAIN_VALVE_OPEN, OUTPUT);
     pinMode(MAIN_VALVE_CLOSE, OUTPUT);
@@ -21,16 +19,6 @@ void setupGPIOs()
     digitalWrite(DRAIN_VALVE_CLOSE, LOW);
 }
 
-void powerOn()
-{
-    digitalWrite(STER, LOW);
-}
-
-void powerOff()
-{
-    digitalWrite(STER, HIGH);
-}
-
 void ledOn()
 {
     debugD("LEDON");
@@ -41,13 +29,6 @@ void ledOff()
 {
     debugD("LEDOFF");
     digitalWrite(SIGNAL_LED, HIGH);
-}
-
-void press(int pressDelay)
-{
-    powerOn();
-    delay(pressDelay);
-    powerOff();
 }
 
 void blink(int blinkDelay)
@@ -65,18 +46,34 @@ void displayPinModes()
     int cnt = 0;
     for (unsigned int pin = 0; pin < 32; pin++)
     {
-        uint8_t pinomode2 = getPinMode((uint8_t)pin);
-        if (pinomode2 == 1)
+        uint8_t pinomode = getPinMode((uint8_t)pin);
+        if (pinomode == 1)
         {
-            debugI("Mode of pin %d is %u", pin, pinomode2);
+            debugI("Mode of pin %d is %u", pin, pinomode);
             cnt++;
         }
+        int pinmode2 = getPinMode2(pin);
+        debugI("Mode2 of pin %d is %d", pin, pinmode2);
     }
     debugI("Output pins cnt %d", cnt);
 }
 
 #include <pins_arduino.h>
 #define UNKNOWN_PIN 0xFF
+
+
+int getPinMode2(uint8_t pin)
+{
+    uint8_t bit = digitalPinToBitMask(pin);
+    uint8_t port = digitalPinToPort(pin);
+    volatile uint32_t  *reg = portModeRegister(port);
+
+    if (*reg & bit) {
+        return OUTPUT;
+    } else {
+        return INPUT;
+    }
+}
 
 uint8_t getPinMode(uint8_t pin)
 {
